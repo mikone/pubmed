@@ -13,28 +13,27 @@
 namespace PubMed;
 use SimpleXMLElement;
 
-class Article implements \Serializable
+abstract class Article
 {
   /**
    * SimpleXMLElement class will work on
    * @var object
    */
-  private $xml;
+  protected $xml;
 
   /**
    * PubMed ID
    * @var integer
    */
-  private $pmid;
+  protected $pmid;
 
   /**
    * Constructor, init
    * @param SimpleXMLElement $xml The main xml object to work on
    */
-  public function __construct(SimpleXMLElement $xml)
+  public function __construct()
   {
-    $this->xml = $xml->PubmedArticle->MedlineCitation->Article;
-    $this->pmid = (string) $xml->PubmedArticle->MedlineCitation->PMID;
+
   }
 
   /**
@@ -43,7 +42,6 @@ class Article implements \Serializable
    */
   public function __toString()
   {
-    return print_r($this->xml, true);
   }
 
   /**
@@ -59,7 +57,7 @@ class Article implements \Serializable
    * Run all getters on the xml object
    * @return array array of all getters
    */
-  private function toArray()
+  protected function toArray()
   {
     return array(
       'PMID'         => $this->getPubMedId(),
@@ -96,24 +94,23 @@ class Article implements \Serializable
    */
   public function getAuthors()
   {
-    $authors = array();
-    if (isset($this->xml->AuthorList)) {
-      try {
-        foreach ($this->xml->AuthorList->Author as $author) {
-          $authors[] = (string) $author->LastName . ' ' . (string) $author->Initials;
-        }
-      } catch (Exception $e) {
-        $a = $this->xml->AuthorList->Author;
-        $authors[] = (string) $a->LastName .' '. (string) $a->Initials;
-      }
-    }
-
-    return $authors;
   }
-
+  
+  /**
+   * @return string
+   */
   public function getPubMedId()
   {
     return $this->pmid;
+  }
+
+    /**
+   * Get link of article on pubmed site
+   * @return string
+   */
+  public function getLink()
+  {
+    return "https://www.ncbi.nlm.nih.gov/pubmed/".$this->pmid;
   }
 
   /**
@@ -121,16 +118,6 @@ class Article implements \Serializable
    */
   public function getDoid()
   {
-    $ELocationID = "";
-    if (isset($this->xml->ELocationID)) {
-      foreach ($this->xml->ELocationID as $uid) {
-        if (preg_match('/^10.\d{4,9}\//', $uid)) {
-          $ELocationID = (string) $uid;
-        }
-      }
-    }
-
-    return $ELocationID;
   }
 
   /**
@@ -138,16 +125,6 @@ class Article implements \Serializable
    */
   public function getPii()
   {
-      $pii = "";
-      if (isset($this->xml->ELocationID)) {
-          foreach ($this->xml->ELocationID as $uid) {
-              if (!preg_match('/^10.\d{4,9}\//', $uid)) {
-                  $pii = (string) $uid;
-              }
-          }
-      }
-
-      return $pii;
   }
 
   /**
@@ -156,7 +133,6 @@ class Article implements \Serializable
    */
   public function getVolume()
   {
-    return (string) $this->xml->Journal->JournalIssue->Volume;
   }
 
   /**
@@ -165,7 +141,6 @@ class Article implements \Serializable
    */
   public function getIssue()
   {
-    return (string) $this->xml->Journal->JournalIssue->Issue;
   }
 
   /**
@@ -174,16 +149,6 @@ class Article implements \Serializable
    */
   public function getPubYear()
   {
-      if (!empty($this->xml->Journal->JournalIssue->PubDate->Year)) {
-          return (string) $this->xml->Journal->JournalIssue->PubDate->Year;
-      } else {
-          $pubDate = (string) $this->xml->Journal->JournalIssue->PubDate->MedlineDate;
-          if (preg_match('/^\d\d\d\d/', $pubDate)) {
-              return substr($pubDate, 0, 4);
-          } else {
-              return (string) $this->xml->ArticleDate->Year;
-          }
-      }
   }
 
   /**
@@ -192,7 +157,6 @@ class Article implements \Serializable
    */
   public function getPubMonth()
   {
-    return (string) $this->xml->Journal->JournalIssue->PubDate->Month;
   }
 
   /**
@@ -201,7 +165,6 @@ class Article implements \Serializable
    */
   public function getPubDay()
   {
-    return (string) $this->xml->Journal->JournalIssue->PubDate->Day;
   }
 
   /**
@@ -210,7 +173,6 @@ class Article implements \Serializable
    */
   public function getISSN()
   {
-    return (string) $this->xml->Journal->ISSN;
   }
 
   /**
@@ -219,7 +181,6 @@ class Article implements \Serializable
    */
   public function getJournalTitle()
   {
-    return (string) $this->xml->Journal->Title;
   }
 
   /**
@@ -228,7 +189,6 @@ class Article implements \Serializable
    */
   public function getJournalAbbr()
   {
-    return (string) $this->xml->Journal->ISOAbbreviation;
   }
 
   /**
@@ -237,7 +197,6 @@ class Article implements \Serializable
    */
   public function getPagination()
   {
-    return (string) $this->xml->Pagination->MedlinePgn;
   }
 
   /**
@@ -246,7 +205,6 @@ class Article implements \Serializable
    */
   public function getArticleTitle()
   {
-    return (string) $this->xml->ArticleTitle;
   }
 
   /**
@@ -255,7 +213,6 @@ class Article implements \Serializable
    */
   public function getAbstractText()
   {
-    return (string) $this->xml->Abstract->AbstractText;
   }
 
   /**
@@ -264,28 +221,5 @@ class Article implements \Serializable
    */
   public function getAffiliation()
   {
-    return (string) $this->xml->Affiliation;
-  }
-  
-  /**
-   * Custom serialize
-   * @return string Serialized Article
-   */
-  public function serialize()
-  {
-      $ret = array();
-      $ret['pmid'] = $this->pmid;
-      $ret['xml'] = $this->xml->asXML();
-      return serialize($ret);
-  }
-  
-  /**
-   * Custom unserialize
-   */
-  public function unserialize($data)
-  {
-      $ret = unserialize($data);
-      $this->pmid = $ret['pmid'];
-      $this->xml = simplexml_load_string($ret['xml']);
   }
 }
