@@ -38,7 +38,7 @@ The option array is an associative array
 | ------ | ------ | ------ |
 | articles | true / false / null | if true return the articles in search |
 | summary | true / false / null |  if true return only the summary of articles |
-| page | null / number | if is set return paginated results |
+| page | number / null | if is set return paginated results |
 
 Example:
 ```
@@ -46,7 +46,7 @@ options['articles'] = true;
 
 or 
 
-$params = {'articles' => true, 'summary' => 'true'};
+$params = {'articles' => true, 'summary' => 'true', 'page' => 2};
 ```
 
 ## Credits
