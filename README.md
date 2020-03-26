@@ -2,59 +2,66 @@
 
 Getting started
 ---------------
-
-### Installing via Composer
-
-The recommended way to install PubMed is through [Composer](http://getcomposer.org).
-
-1. Add ``tmpjr/pubmed`` as a dependency in your project's ``composer.json`` file:
-
-        {
-            "require": {
-                "tmpjr/pubmed": "dev-master"
-            }
-        }
-
-2. Download and install Composer:
-
-        curl -s http://getcomposer.org/installer | php
-
-3. Install your dependencies:
-
-        php composer.phar install
-
-4. Require Composer's autoloader
-
-    Composer also prepares an autoload file that's capable of autoloading all of the classes in any of the libraries that it downloads. To use it, just add the following line to your code's bootstrap process:
-
-        require 'vendor/autoload.php';
-
-You can find out more on how to install Composer, configure autoloading, and other best-practices for defining dependencies at [getcomposer.org](http://getcomposer.org).
-
+```
+composer require mikone/pubmed
+```
 Basic Usage
 -----------
 
+Search by Term and return how many articles there are, and their PMIDs
 ```php
-<?php
-
-require 'vendor/autoload.php';
-
-// Search By PMID
-$api = new PubMed\PubMedId();
-$article = $api->query(15221447);
-print_r($article);
-
-// Search By Term
 $api = new PubMed\Term();
+$api->setReturnStart(10); // set first returned articles, defaults to 0, helpful in case of pagination
 $api->setReturnMax(100); // set max returned articles, defaults to 10
 $articles = $api->query('CFTR');
 print_r($articles);
+```
+Search by Term with options array
+```php
+$api = new PubMed\Term();
+$api->setReturnStart(10); // set first returned articles, defaults to 0, helpful in case of pagination
+$api->setReturnMax(100); // set max returned articles, defaults to 10
+$articles = $api_->query('CFTR', $params);
+print_r($articles);
+```
+Get Articles with Paginated Results
+```php
+$api = new PubMed\Term();
+$api->setCurrentSearch($search); // pass the previous search, to be able to calculate the page number directly
+articles = $api->queryPage($page);
+print_r($articles);
+```
+Search Arcticle by PMID
+```php
+$api = new PubMed\PubMedId();
+$article = $api->query(15221447);
+print_r($article);
+```
+### Options array
 
+The option array is an associative array
+
+| Option name | value | Description |
+| ------ | ------ | ------ |
+| articles | true / false / null | if true return the articles in search |
+| summary | true / false / null |  if true return only the summary of articles |
+| page | Under development | if is set return paginated results based on the passed search object |
+Example:
+```
+options['articles'] = true;
+
+or 
+
+$params = {'articles' => true, 'summary' => 'true'};
 ```
 
+## Credits
+The library has been forked by that of [tmpjr/pubmed] to allow the various types of bees that pubmed provides, to be performed in a completely transparent way.
+
+
 ## License
+The MIT License (MIT). Please see [License File](https://github.com/spatie/laravel-permission/blob/master/LICENSE.md) for more information.
 
-Licensed under the open MIT license:
 
-http://rem.mit-license.org
+[tmpjr/pubmed]: <https://github.com/joemccann/dillinger>
 
