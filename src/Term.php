@@ -48,17 +48,6 @@ class Term extends PubMed
     $this->_current_search = $oldSearch;
   }
 
-  public function queryPage($page)
-  {
-      if (isset($page) && is_numeric($page) && $page > 0)
-      {
-        $this->returnMax = $this->_current_search['retmax'];
-        $this->returnStart = ($this->returnMax * ($page-1))+1 > $this->_current_search['count'] ? 0 : ($this->returnMax * ($page-1))+1;
-        $this->query($this->_current_search['term'], (array) $this->_current_search['options']);
-
-        return $this->_current_search;
-      }
-  }
 
   /**
    * Get Articles by options
@@ -99,6 +88,14 @@ class Term extends PubMed
    */
   public function query($term, $options = array())
   {
+    //  check if is a pagination search
+    if (isset($options['page']) && is_numeric($options['page']) && $options['page'] > 0)
+    {
+        $page = $options['page'];
+    //   $this->returnMax = $this->_current_search['retmax'];
+      $this->returnStart = ($this->returnMax * ($page-1))+1;
+    }
+
     $content = $this->sendRequest($term);
     $responseJSON = json_decode($content, true);
 

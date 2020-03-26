@@ -24,13 +24,6 @@ $api->setReturnMax(100); // set max returned articles, defaults to 10
 $articles = $api_->query('CFTR', $params);
 print_r($articles);
 ```
-Get Articles with Paginated Results
-```php
-$api = new PubMed\Term();
-$api->setCurrentSearch($search); // pass the previous search, to be able to calculate the page number directly
-articles = $api->queryPage($page);
-print_r($articles);
-```
 Search Arcticle by PMID
 ```php
 $api = new PubMed\PubMedId();
@@ -45,7 +38,8 @@ The option array is an associative array
 | ------ | ------ | ------ |
 | articles | true / false / null | if true return the articles in search |
 | summary | true / false / null |  if true return only the summary of articles |
-| page | Under development | if is set return paginated results based on the passed search object |
+| page | null / number | if is set return paginated results |
+
 Example:
 ```
 options['articles'] = true;
