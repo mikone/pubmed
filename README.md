@@ -1,12 +1,24 @@
-### API wrapper library to interface with NCBI's PubMed Efetch Server
+# Pubmed API for Laravel 6/7
+-------
+[![Latest Stable Version](https://poser.pugx.org/mikone/pubmed/v/stable)](https://packagist.org/packages/mikone/pubmed) [![Total Downloads](https://poser.pugx.org/mikone/pubmed/downloads)](https://packagist.org/packages/mikone/pubmed) [![Latest Unstable Version](https://poser.pugx.org/mikone/pubmed/v/unstable)](https://packagist.org/packages/mikone/pubmed) [![License](https://poser.pugx.org/mikone/pubmed/license)](https://packagist.org/packages/mikone/pubmed) 
 
-Getting started
----------------
+##### DEMO: https://pubmed-api.herokuapp.com/
+
+This library allows you to access the research of scientific articles published on Pubmed.
+It does this in a completely transparent way, normalizing the use of the different APIs and the response objects to the Pubmed APIs
+
+## Requirements
+
+- php >= 5.3
+- [guzzlehttp/guzzle >= 6.0](http://docs.guzzlephp.org/en/stable/overview.html)
+- [laravel >= 6.x](https://laravel.com/docs/7.x)
+
+# Installation
 ```
 composer require mikone/pubmed
 ```
-Basic Usage
------------
+# Usage
+
 
 Search by Term and return how many articles there are, and their PMIDs
 ```php
@@ -48,6 +60,8 @@ or
 
 $params = {'articles' => true, 'summary' => 'true', 'page' => 2};
 ```
+## Changelog
+Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
 ## Credits
 The library has been forked by that of [tmpjr/pubmed] to allow the various types of bees that pubmed provides, to be performed in a completely transparent way.
