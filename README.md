@@ -7,6 +7,8 @@
 This library allows you to access the research of scientific articles published on Pubmed.
 It does this in a completely transparent way, normalizing the use of the different APIs and the response objects to the Pubmed APIs
 
+See Pubmed API Documentation for [PubmedAPI](https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch)
+
 ## Requirements
 
 - php >= 5.3
@@ -18,7 +20,6 @@ It does this in a completely transparent way, normalizing the use of the differe
 composer require mikone/pubmed
 ```
 # Usage
-
 
 Search by Term and return how many articles there are, and their PMIDs
 ```php
